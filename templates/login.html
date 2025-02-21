@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+<form  method="post">
+    {% csrf_token %}
+    <h2 class="logo" style="margin-top: 2rem; text-align: center;"><i style="color: rgb(255, 183, 0); margin-right: 23rem;" class="fa-solid fa-credit-card"></i><br>EXPENDITURE MANAGEMENT</h2>
+
+                                {% if messages %}
+                                 {{ messages.tags }}
+                                <div class="alert alert-primary" role="alert">
+                                    {% for message in messages %}
+                                    {{ message }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="registrationForm" action="">
+                            <div class="form-group">
+                                <label for="email" style="margin-top: 2rem;">Username</label>
+                                <input type="text"
+                                       name="uusername"
+                                       class="form-control"
+                                       id="email"
+                                       placeholder="Username" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="password" style="margin-top: 2rem;">Password</label>
+                                <input type="password"
+                                       name="upassword"
+                                       class="form-control"
+                                       id="password"
+                                       placeholder="Password"
+                                    required />
+                            </div>
+                            <button class="btn btn-danger"style="margin-top: 2rem;">
+                              Login
+                            </button>
+                        </form>
+                        <p class="mt-3">
+                            Not registered?
+                            <a href="/register">Create an
+                                account</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+</body>
+</html>
