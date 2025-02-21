@@ -52,7 +52,7 @@ def register_page(request):
         )
         user_data.set_password(password)
         user_data.save()
-        messages.info(request, 'User Created Successfully Go To Login Page')
+        messages.info(request, 'Account Created Successfully Go To Login Page')
 
         return redirect('register')
 
