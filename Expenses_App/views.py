@@ -25,7 +25,7 @@ def login_page(request):
                 return redirect('login')
             else:
                 login(request,user)
-                return redirect('table')
+                return redirect('expense')
 
 
 
@@ -58,11 +58,16 @@ def register_page(request):
 
     return render(request, 'register.html')
 
-@login_required(login_url='/login/')
-def table(request):
-    return render(request,'table.html')
+# @login_required(login_url='/login/')
+# def table(request):
+#     return render(request,'table.html')
 
 
 def logout_page(request):
     logout(request)
     return redirect('login')
+
+
+@login_required(login_url='/login/')
+def expense(request):
+    return render(request,'expense.html')

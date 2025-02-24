@@ -25,6 +25,7 @@ urlpatterns = [
     path('', Expenses_App.views.home, name='home'),
    path('login', Expenses_App.views.login_page, name='login'),
     path('register', Expenses_App.views.register_page, name='register'),
-    path('table',views.table,name="table"),
-    path('logout',views.logout_page,name='logout')
+    # path('table',views.table,name="table"),
+    path('logout',views.logout_page,name='logout'),
+    path('expense',views.expense,name='expense'),
 ]

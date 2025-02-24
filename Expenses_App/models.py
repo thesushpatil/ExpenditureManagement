@@ -7,3 +7,4 @@ class UserData(models.Model):
     name=models.CharField(max_length=100,null=False )
     email=models.EmailField(max_length=100,null=False)
     password=models.CharField(max_length=100,null=False)
+

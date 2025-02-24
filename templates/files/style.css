@@ -1,0 +1,204 @@
+                /*HOME PAGE*/
+*{
+    margin:0px;
+    padding: 0px;
+}
+
+nav{
+    height: 80px;
+    background-color: #0f1111;
+    color: white;
+    display: flex;
+    align-items: center;
+    /* justify-content: space-evenly;  */
+    overflow: hidden;
+    position: sticky;
+    top:0;
+}
+
+.logo{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin-left: 1rem;
+}
+.log-in:hover{
+    border: 2px solid white;
+}
+
+.log-in{
+    width: 70px;
+    height: 30px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-left: 4rem;
+}
+.hover{
+    color: orangered;
+}
+
+
+/* style.css  for expenses*/
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Dark text color for better contrast */
+}
+
+header {
+    background-color: #007bff; /* Blue header */
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 20px;
+    border: 1px solid #ddd; /* Light border for sections */
+    padding: 20px;
+    background-color: white; /* White background for sections */
+    border-radius: 5px;  /* Slightly rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+h2 {
+    margin-top: 0;
+    color: #007bff; /* Blue headings */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0; /* Light gray for table header */
+}
+
+input[type="number"], select {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #007bff; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: fixed; /* Fixed footer */
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+
+/* style.css  for  expenses*/
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Dark text color for better contrast */
+}
+
+header {
+    background-color: #007bff; /* Blue header */
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 20px;
+    border: 1px solid #ddd; /* Light border for sections */
+    padding: 20px;
+    background-color: white; /* White background for sections */
+    border-radius: 5px;  /* Slightly rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+h2 {
+    margin-top: 0;
+    color: #007bff; /* Blue headings */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0; /* Light gray for table header */
+}
+
+input[type="number"], select {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #007bff; /* Blue button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: fixed; /* Fixed footer */
+    bottom: 0;
+    width: 100%;
+}
+
+/* More styling can be added here */
