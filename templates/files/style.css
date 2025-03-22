@@ -113,7 +113,7 @@ footer {
     color: white;
     text-align: center;
     padding: 1rem 0;
-    position: fixed; /* Fixed footer */
+    /*position: fixed; !* Fixed footer *!*/
     bottom: 0;
     width: 100%;
 }
@@ -196,7 +196,7 @@ footer {
     color: white;
     text-align: center;
     padding: 1rem 0;
-    position: fixed; /* Fixed footer */
+    /*position: fixed; !* Fixed footer *!*/
     bottom: 0;
     width: 100%;
 }
