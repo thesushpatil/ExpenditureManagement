@@ -1,50 +1,50 @@
-{% extends 'base.html' %}  {% block content %}
-  <h1>Expense Manager</h1>
+{% extends 'base.html' %}
+{% block content %}
 
-  <div style="display: flex;">
-    <div style="width: 50%;">
-      <h2>Income</h2>
-      {% if income %}
+
+
+<div class="container">
+    <div class="section">
+        <h2>Income</h2>
+        {% if income %}
         <p>Total Income: {{ income.amount }}</p>
         <form method="post" action="{% url 'expense_manager' %}">
-          {% csrf_token %}
-          {{ income_form.as_p }}
-          <button type="submit" name="income_submit">Update Income</button>
+            {% csrf_token %}
+            {{ income_form.as_p }}
+            <button type="submit" name="income_submit">Update Income</button>
         </form>
-        <a href="{% url 'delete_income' income.income_id %}">Delete Income</a>
-      {% else %}
+        <a href="{% url 'delete_income' income.income_id %}" class="button button-delete">Delete Income</a>
+        {% else %}
         <p>No income added yet.</p>
         <form method="post" action="{% url 'expense_manager' %}">
-          {% csrf_token %}
-          {{ income_form.as_p }}
-          <button type="submit" name="income_submit">Add Income</button>
+            {% csrf_token %}
+            {{ income_form.as_p }}
+            <button type="submit" name="income_submit">Add Income</button>
         </form>
-      {% endif %}
-
-
-
-
-
-      <h2>Expenses</h2>
-      <form method="post" action="{% url 'expense_manager' %}">
-        {% csrf_token %}
-        {{ expense_form.as_p }}
-        <button type="submit" name="expense_submit">Add Expense</button>
-      </form>
-
-      <ul>
-        {% for expense in expenses %}
-          <li>
-            {{ expense.category.name }}: {{ expense.amount }} - {{ expense.date }}
-            <a href="{% url 'delete_expense' expense.exp_id %}">Delete</a>
-          </li>
-        {% empty %}
-          <li>No expenses added yet.</li>
-        {% endfor %}
-      </ul>
+        {% endif %}
     </div>
 
-     <div style="width: 50%;">
+    <div class="section">
+        <h2>Expenses</h2>
+        <form method="post" action="{% url 'expense_manager' %}">
+            {% csrf_token %}
+            {{ expense_form.as_p }}
+            <button type="submit" name="expense_submit">Add Expense</button>
+        </form>
+
+        <ul>
+            {% for expense in expenses %}
+            <li>
+                {{ expense.category.name }}: {{ expense.amount }} - {{ expense.date }}
+                <a href="{% url 'delete_expense' expense.exp_id %}" class="button button-delete">Delete</a>
+            </li>
+            {% empty %}
+            <li>No expenses added yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
         <h2>Savings</h2>
         <p>Remaining Amount: {{ remaining_amount }}</p>
 
@@ -56,28 +56,17 @@
 
         <ul>
             {% for saving in savings %}
-                <li>
-                    {{ saving.date }}: {{ saving.amount }} - {{ saving.description }}
-                    <a href="{% url 'delete_saving' saving.id %}">Delete</a>
-                </li>
+            <li>
+                {{ saving.date }}: {{ saving.amount }} - {{ saving.description }}
+                <a href="{% url 'delete_saving' saving.id %}" class="button button-delete">Delete</a>
+            </li>
             {% empty %}
-                <li>No savings added yet.</li>
+            <li>No savings added yet.</li>
             {% endfor %}
         </ul>
     </div>
-{#  {% if messages %}#}
-{#    <ul class="messages">#}
-{#      {% for message in messages %}#}
-{#        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
-{#      {% endfor %}#}
-{#    </ul>#}
-{#  {% endif %}#}
-{#{% endblock %}#}
 
-
-
-
-
+    <div class="section">
         <h2>Budgets</h2>
         <form method="post" action="{% url 'expense_manager' %}">
             {% csrf_token %}
@@ -87,23 +76,26 @@
 
         <ul>
             {% for budget in budgets %}
-                <li>
-                    {{ budget.category.name }}: Limit {{ budget.limit }},
-                    <a href="{% url 'delete_budget' budget.id %}">Delete</a>
-                </li>
+            <li>
+                {{ budget.category.name }}: Limit {{ budget.limit }}, Start: {{ budget.start_date }}, End: {{ budget.end_date }}
+                <a href="{% url 'delete_budget' budget.id %}" class="button button-delete">Delete</a>
+            </li>
             {% empty %}
-                <li>No budgets added yet.</li>
+            <li>No budgets added yet.</li>
             {% endfor %}
         </ul>
-
-    {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endblock %}
     </div>
 
+    <div class="section">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
 
