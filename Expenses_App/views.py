@@ -73,7 +73,7 @@ def logout_page(request):
     return redirect('login')
 
 
-
+#
 @login_required
 def expense_manager(request):
     user = request.user
