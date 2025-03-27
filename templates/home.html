@@ -1,19 +1,32 @@
-{% extends 'base.html' %}
 
-{% load static %}
-
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expenditure Management</title>
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{% static 'style.css'%}">
+    <title>Expenditure Management</title>
+
+    <style>
+        #content-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .center-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 10vh; /* Adjust height as needed */
+        }
+
+        .center-buttons button {
+            margin: 20px; /* Add some space between buttons */
+        }
+
+    </style>
 </head>
 
 <body>
@@ -31,21 +44,36 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href=" ">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login">Login</a></li>
-                    <li class="nav-item"><a href="{% url 'income' %}"><button>income</button></a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Balance</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Budget</a></li>
+                    <li class="nav-item"><a class="nav-link" href="logout">Logout</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">AboutUs</a></li>
                 </ul>
             </div>
         </div>
     </nav>
+    {% block content %}
 
-{#   <div id="content">#}
-{#        {% include income %}#}
-{#    </div>#}
+    <div class="center-buttons">
+        <button onclick="loadContent('income')">income</button>
+        <button onclick="loadContent('budget')">budget</button>
+        <button onclick="loadContent('expenses')">expenses</button>
+        <button onclick="loadContent('savings')">savings</button>
+    </div>
 
+{% endblock %}
+    <div id="content-container">
+        </div>
+
+    <script>
+        function loadContent(filename) {
+            fetch(filename)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('content-container').innerHTML = data;
+                })
+                .catch(error => {
+                    document.getElementById('content-container').innerHTML = `<p>Error loading ${filename}: ${error}</p>`;
+                });
+        }
+    </script>
 </body>
 </html>
-{% endblock %}
-

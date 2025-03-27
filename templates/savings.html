@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section">
+            <h2>Savings</h2>
+{#            <p>Remaining Amount: {{ remaining_amount}} - {{saving.amount }}</p>#}
+                Remaining Amount: {{save}}
+            <form method="post" action="{% url 'savings' %}">
+                {% csrf_token %}
+                {{ saving_form.as_p }}
+                <button type="submit" name="saving_submit">Add Saving</button>
+                <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
+            </form>
+
+            <ul>
+                {% for saving in savings %}
+                <li>
+                    {{ saving.date }}: {{ saving.amount }} - {{ saving.description }}
+                    <a href="{% url 'delete_saving' saving.id %}" class="button button-delete">Delete</a>
+                </li>
+                {% empty %}
+                <li>No savings added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+{% endblock %}

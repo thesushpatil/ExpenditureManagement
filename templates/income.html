@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+ <h2>Income</h2>
+            {% if income %}
+            <p>Total Income: {{ income.amount }}</p>
+            <form method="post" action="{% url 'income' %}">
+                {% csrf_token %}
+                {{ income_form.as_p }}
+                <button type="submit" name="income_submit">Update Income</button>
+                <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
+
+            </form>
+            <a href="{% url 'delete_income' income.income_id %}" class="button button-delete">Delete Income</a>
+            {% else %}
+            <p>No income added yet.</p>
+
+          <form method="post" action="{% url 'income' %}">
+              {% csrf_token %}
+                {{ income_form.as_p }}
+                <button type="submit"  name="income_submit">Add Income</button>
+              <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
+{#                <a href="{% url 'home' %}" type="submit" class="btn btn-primary">Add Income</a>#}
+
+            </form>
+            {% endif %}
+ </div>
+{% endblock %}

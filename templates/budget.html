@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section">
+            <h2>Budgets</h2>
+            <form method="post" action="{% url 'budget' %}">
+                {% csrf_token %}
+                {{ budget_form.as_p }}
+                <button type="submit" name="budget_submit">Add Budget</button>
+                <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
+            </form>
+
+            <ul>
+                {% for budget in budgets %}
+                <li>
+                    {{ budget.category.name }}: Limit {{ budget.limit }}
+                    <a href="{% url 'delete_budget' budget.id %}" class="button button-delete">Delete</a>
+                </li>
+                {% empty %}
+                <li>No budgets added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+{% endblock %}
