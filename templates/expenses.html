@@ -1,11 +1,9 @@
 
 {% extends 'base.html' %}
 {% block content %}
-<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
-    <div style="text-align: center; width: 90%; max-width: 800px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
-        <h2>Expenses</h2>
-
-
+<div style="display: flex; justify-content: center; min-height: 80vh; align-items: flex-start; padding: 20px;">
+    <div style="text-align: center; width: 45%; max-width: 400px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9; margin-right: 20px;">
+        <h2>Add Expense</h2>
         <form method="post" action="{% url 'expenses' %}">
             {% csrf_token %}
             {% if messages %}
@@ -19,10 +17,12 @@
             <button type="submit" name="expense_submit" class="btn btn-primary">Add Expense</button>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </form>
+    </div>
 
-        <h3 style="margin-top: 20px;">Expense History</h3>
+    <div style="text-align: center; width: 45%; max-width: 400px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
+        <h3>Expense History</h3>
 
-     <form method="get" action="{% url 'expenses' %}" style="margin-bottom: 20px;">
+        <form method="get" action="{% url 'expenses' %}" style="margin-bottom: 20px;">
             <label for="search_date">Search by Date:</label>
             <input type="date" name="search_date" id="search_date" value="{{ search_date }}">
 
@@ -39,22 +39,18 @@
             <a href="{% url 'expenses' %}" class="btn btn-secondary btn-sm">Clear Search</a>
         </form>
 
-
         <div style="margin-top: 20px;">
-            <a href="{% url 'generate_expense_pdf' %}" class="btn btn-info">Download Expense PDF</a>
+            <a href="{% url 'generate_expense_pdf' %}" class="btn btn-info btn-sm">Download PDF</a>
         </div>
-
-
 
         {% if expenses %}
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-striped table-bordered" style="font-size: 0.9em;">
                 <thead>
                     <tr>
                         <th>Category</th>
                         <th>Amount</th>
                         <th>Date</th>
-                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -64,7 +60,6 @@
                         <td>{{ expense.category.name }}</td>
                         <td>{{ expense.amount }}</td>
                         <td>{{ expense.date }}</td>
-                        <td>{{ expense.description }}</td>
                         <td>
                             <a href="{% url 'delete_expense' expense.exp_id %}" class="btn btn-danger btn-sm">Delete</a>
                         </td>
@@ -92,19 +87,30 @@
         border-color: #117a8b;
     }
     .table-responsive {
-        margin-top: 20px;
+        margin-top: 10px;
     }
     .table {
         width: 100%;
         border-collapse: collapse;
     }
     .table th, .table td {
-        padding: 8px;
+        padding: 6px;
         border: 1px solid #ddd;
         text-align: left;
     }
     .table th {
         background-color: #f2f2f2;
     }
-    /* Existing styles */
+    /* Adjust width for smaller screens */
+    @media (max-width: 768px) {
+        .section-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        .section-container > div {
+            width: 90%;
+            margin-right: 0 !important;
+            margin-bottom: 20px;
+        }
+    }
 </style>
