@@ -6,17 +6,25 @@ from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
-
+#For pdf conversion
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 from .models import Income, Expense, ExpenseCategory, Saving, Budget
 from .forms import IncomeForm, ExpenseForm, SavingForm, BudgetForm
 from django.db.models import Sum
 
 
-from django.views.decorators.csrf import csrf_exempt
-# Create your views here.
-def home(request):
-    return render(request, 'home_page.html')
+
+
+
+def welcome(request):
+    return render(request, 'welcome.html')
+
+def home_page(request):
+    return render(request, 'home.html')
 
 def login_page(request):
     if request.method == 'POST':
@@ -28,7 +36,7 @@ def login_page(request):
             return redirect('login')
         else:
             user=authenticate(request,username=username,password=password)
-            print(user)
+            # print(user)
             if user is None:
                 messages.error(request,'The User Does Not Exist')
                 return redirect('login')
@@ -78,9 +86,6 @@ def logout_page(request):
     return redirect('login')
 
 
-#
-
-
 @login_required
 def delete_expense(request, expense_id):
     expense = get_object_or_404(Expense, exp_id=expense_id, user=request.user)
@@ -110,8 +115,7 @@ def delete_budget(request, budget_id):
     return redirect('budget')
 
 
-def home_page(request):
-    return render(request, 'home.html')
+
 
 @login_required
 def income(request):
@@ -135,11 +139,20 @@ def income(request):
 
 @login_required
 def expense_view(request):
+
     user = request.user
     expenses = Expense.objects.filter(user=user).order_by('-date')
-    expense_form = ExpenseForm()
     expense_categories = ExpenseCategory.objects.all()
+    expense_form = ExpenseForm()
     budgets = Budget.objects.filter(user=user)
+
+    search_date = request.GET.get('search_date')
+    search_category = request.GET.get('search_category')
+
+    if search_date:
+        expenses = expenses.filter(date=search_date)
+    if search_category:
+        expenses = expenses.filter(category_id=search_category)
 
     if request.method == 'POST':
         expense_form = ExpenseForm(request.POST)
@@ -150,7 +163,9 @@ def expense_view(request):
             # Budget check.
             budget = budgets.filter(category=expense.category).first()
             if budget:
-                category_expenses = Expense.objects.filter(user=user, category=expense.category).aggregate(Sum('amount'))['amount__sum'] or 0
+                category_expenses = \
+                Expense.objects.filter(user=user, category=expense.category).aggregate(Sum('amount'))[
+                    'amount__sum'] or 0
                 if (category_expenses + expense.amount) > budget.limit:
                     messages.error(request, f'Expense exceeds budget limit for {expense.category.name}.')
                     return redirect('expenses')
@@ -161,8 +176,16 @@ def expense_view(request):
         else:
             messages.error(request, 'Invalid expense data. Please correct the errors.')
 
-    context = {'expense_form': expense_form, 'expenses': expenses, 'expense_categories': expense_categories}
+    context = {
+        'expense_form': expense_form,
+        'expenses': expenses,
+        'expense_categories': expense_categories,
+        'search_date': search_date,
+        'search_category': search_category,
+    }
     return render(request, 'expenses.html', context)
+
+
 @login_required
 def budget_view(request):
     user = request.user
@@ -213,3 +236,23 @@ def saving_view(request):
 
     context = {'saving_form': saving_form, 'savings': savings, 'remaining_amount': remaining_amount,}
     return render(request, 'savings.html', context)
+
+
+@login_required
+def generate_expense_pdf(request):
+    user = request.user
+    expenses = Expense.objects.filter(user=user).order_by('-date')
+
+    template_path = 'expenses/expense_pdf.html'  # Create this template
+    context = {'expenses': expenses}
+    template = get_template(template_path)
+    html = template.render(context)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="expenses.pdf"'
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response

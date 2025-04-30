@@ -43,9 +43,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href=" ">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout">Logout</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">AboutUs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="home">AboutUs</a></li>
                 </ul>
             </div>
         </div>
@@ -53,10 +53,10 @@
     {% block content %}
 
     <div class="center-buttons">
-        <button onclick="loadContent('income')">income</button>
-        <button onclick="loadContent('budget')">budget</button>
-        <button onclick="loadContent('expenses')">expenses</button>
-        <button onclick="loadContent('savings')">savings</button>
+        <button onclick="loadContent('income')">Income</button>
+        <button onclick="loadContent('budget')">Budget</button>
+        <button onclick="loadContent('expenses')">Expenses</button>
+        <button onclick="loadContent('savings')">Savings</button>
     </div>
 
 {% endblock %}

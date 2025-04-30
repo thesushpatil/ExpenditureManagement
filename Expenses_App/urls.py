@@ -4,7 +4,7 @@ from Expenses_App import views
  #URLConf
 urlpatterns=[
         # path("",views.home,name="home"),
-
+        path("", views.welcome, name="welcome"),
         path("login/", views.login_page, name="login"),
         path("register/", views.register_page, name="register"),
         path('logout/',views.logout_page,name='logout'),
@@ -18,10 +18,13 @@ urlpatterns=[
 
 
 ##NEW STARTS HERE
-    path("",views.home_page,name="home"),
+    path("home/",views.home_page,name="home"),
     path('income/', views.income, name='income'),
     path('expenses/', views.expense_view, name='expenses'),
     path('budget/', views.budget_view, name='budget'),
     path('savings/', views.saving_view, name='savings'),
+
+path('expenses/pdf/', views.generate_expense_pdf, name='generate_expense_pdf'),
+
 
     ]

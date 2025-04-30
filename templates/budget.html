@@ -1,23 +1,62 @@
+
 {% extends 'base.html' %}
 {% block content %}
-<div class="section">
-            <h2>Budgets</h2>
-            <form method="post" action="{% url 'budget' %}">
-                {% csrf_token %}
-                {{ budget_form.as_p }}
-                <button type="submit" name="budget_submit">Add Budget</button>
-                <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
-            </form>
-
-            <ul>
-                {% for budget in budgets %}
-                <li>
-                    {{ budget.category.name }}: Limit {{ budget.limit }}
-                    <a href="{% url 'delete_budget' budget.id %}" class="button button-delete">Delete</a>
-                </li>
-                {% empty %}
-                <li>No budgets added yet.</li>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+    <div style="text-align: center; width: 80%; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
+        <h2>SET BUDGET</h2>
+        <form method="post" action="{% url 'budget' %}">
+            {% csrf_token %}
+            {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {% for message in messages %}
+                {{ message }}
                 {% endfor %}
-            </ul>
-        </div>
+            </div>
+            {% endif %}
+            {{ budget_form.as_p }}
+            <button type="submit" name="budget_submit" class="btn btn-primary">Add Budget</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+        </form>
+
+        <h3 style="margin-top: 20px;">Current Budgets</h3>
+        <ul>
+            {% for budget in budgets %}
+            <li>
+                {{ budget.category.name }}: Limit {{ budget.limit }}
+                <a href="{% url 'delete_budget' budget.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </li>
+            {% empty %}
+            <li>No budgets added yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endblock %}
+
+<style>
+    .btn {
+        margin-right: 5px;
+    }
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.8em;
+    }
+    h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+    ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    ul li:last-child {
+        border-bottom: none;
+    }
+</style>

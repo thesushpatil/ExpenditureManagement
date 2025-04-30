@@ -1,5 +1,5 @@
 // DO the forget password and forget username in login page...
-// Add front page and changes in home pages..
+// Add front page and changes in home pages..                       done //
 // Add content in about us page..
 // Add footer in all pages with copyrights..
 
@@ -9,3 +9,14 @@
 
 //******And add the searching and history from current month in all models in stat module*****
 //that shows all savings and expenses and over a month
+
+
+
+
+   const button = document.getElementById("aboutus");
+
+    button.addEventListener('click',function ()
+    {
+        alert("This Page is in Construction");
+    });
+

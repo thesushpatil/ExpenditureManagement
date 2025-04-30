@@ -1,23 +1,110 @@
+
 {% extends 'base.html' %}
 {% block content %}
-<div class="section">
-            <h2>Expenses</h2>
-            <form method="post" action="{% url 'expenses' %}">
-                {% csrf_token %}
-                {{ expense_form.as_p }}
-                <button type="submit" name="expense_submit">Add Expense</button>
-                <a href="{% url 'home' %}" class="btn btn-primary">Back</a>
-            </form>
-            <ul>
-                {% for expense in expenses %}
-                <li>
-                    {{ expense.category.name }}: {{ expense.amount }} - {{ expense.date }}
-                    <a href="{% url 'delete_expense' expense.exp_id %}" class="button button-delete">Delete</a>
-                </li>
-                {% empty %}
-                <li>No expenses added yet...</li>
+<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+    <div style="text-align: center; width: 90%; max-width: 800px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
+        <h2>Expenses</h2>
+
+
+        <form method="post" action="{% url 'expenses' %}">
+            {% csrf_token %}
+            {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {% for message in messages %}
+                {{ message }}
                 {% endfor %}
-            </ul>
+            </div>
+            {% endif %}
+            {{ expense_form.as_p }}
+            <button type="submit" name="expense_submit" class="btn btn-primary">Add Expense</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+        </form>
+
+        <h3 style="margin-top: 20px;">Expense History</h3>
+
+     <form method="get" action="{% url 'expenses' %}" style="margin-bottom: 20px;">
+            <label for="search_date">Search by Date:</label>
+            <input type="date" name="search_date" id="search_date" value="{{ search_date }}">
+
+            <label for="search_category">Search by Category:</label>
+            <select name="search_category" id="search_category">
+                <option value="">All Categories</option>
+                {% for category in expense_categories %}
+                <option value="{{ category.id }}" {% if category.id|stringformat:'s' == search_category %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-info btn-sm">Search Expenses</button>
+            <a href="{% url 'expenses' %}" class="btn btn-secondary btn-sm">Clear Search</a>
+        </form>
+
+
+        <div style="margin-top: 20px;">
+            <a href="{% url 'generate_expense_pdf' %}" class="btn btn-info">Download Expense PDF</a>
         </div>
+
+
+
+        {% if expenses %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.category.name }}</td>
+                        <td>{{ expense.amount }}</td>
+                        <td>{{ expense.date }}</td>
+                        <td>{{ expense.description }}</td>
+                        <td>
+                            <a href="{% url 'delete_expense' expense.exp_id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>No expenses added yet...</p>
+        {% endif %}
     </div>
+</div>
 {% endblock %}
+
+<style>
+    /* Existing styles */
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+    }
+    .btn-info:hover {
+        background-color: #138496;
+        border-color: #117a8b;
+    }
+    .table-responsive {
+        margin-top: 20px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+    .table th {
+        background-color: #f2f2f2;
+    }
+    /* Existing styles */
+</style>

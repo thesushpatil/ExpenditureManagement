@@ -22,9 +22,10 @@ from Expenses_App import views
 
 urlpatterns = [
       path('admin', admin.site.urls),
+    path("", views.welcome, name="welcome"),
+     # path('', views.home, name='home'),
+     path("home",views.home_page,name="home"),
 
-    # path('', views.home, name='home'),
-    path("",views.home_page,name="home"),
    path('login', Expenses_App.views.login_page, name='login'),
     path('register', Expenses_App.views.register_page, name='register'),
     path('logout',views.logout_page,name='logout'),
@@ -40,6 +41,7 @@ urlpatterns = [
     path('budget', views.budget_view, name='budget'),
     path('savings', views.saving_view, name='savings'),
 
+path('expenses/pdf', views.generate_expense_pdf, name='generate_expense_pdf'),
 
 
 ]
