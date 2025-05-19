@@ -13,10 +13,39 @@
 
 
 
-   const button = document.getElementById("aboutus");
+   // const button = document.getElementById("aboutus");
+   //
+   //  button.addEventListener('click',function ()
+   //  {
+   //      alert("This Page is in Construction");
+   //  });
 
-    button.addEventListener('click',function ()
-    {
-        alert("This Page is in Construction");
+document.addEventListener('DOMContentLoaded', function() {
+        const tableBody = document.getElementById('expenseTableBody');
+        const viewMoreBtn = document.getElementById('viewMoreBtn');
+        const viewLessBtn = document.getElementById('viewLessBtn');
+        const hiddenRows = tableBody ? tableBody.querySelectorAll('.hidden-row') : [];
+        const initialVisibleCount = 5;
+
+        if (viewMoreBtn) {
+            viewMoreBtn.addEventListener('click', function() {
+                hiddenRows.forEach(row => {
+                    row.style.display = 'table-row';
+                });
+                viewMoreBtn.style.display = 'none';
+                viewLessBtn.style.display = 'inline-block';
+            });
+        }
+
+        if (viewLessBtn) {
+            viewLessBtn.addEventListener('click', function() {
+                hiddenRows.forEach((row, index) => {
+                    if (index >= initialVisibleCount - 5) {
+                        row.style.display = 'none';
+                    }
+                });
+                viewMoreBtn.style.display = 'inline-block';
+                viewLessBtn.style.display = 'none';
+            });
+        }
     });
-

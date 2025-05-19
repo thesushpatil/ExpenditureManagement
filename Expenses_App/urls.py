@@ -8,6 +8,7 @@ urlpatterns=[
         path("login/", views.login_page, name="login"),
         path("register/", views.register_page, name="register"),
         path('logout/',views.logout_page,name='logout'),
+        path('aboutus/',views.about_us,name='aboutus'),
 
 
 
@@ -24,7 +25,9 @@ urlpatterns=[
     path('budget/', views.budget_view, name='budget'),
     path('savings/', views.saving_view, name='savings'),
 
-path('expenses/pdf/', views.generate_expense_pdf, name='generate_expense_pdf'),
+    path('expenses/pdf/', views.generate_expense_pdf, name='generate_expense_pdf'),
+
+    path("chatbot/",views.chatbot_view,name="chatbot"),
 
 
     ]

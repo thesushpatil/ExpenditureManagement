@@ -29,6 +29,7 @@ urlpatterns = [
    path('login', Expenses_App.views.login_page, name='login'),
     path('register', Expenses_App.views.register_page, name='register'),
     path('logout',views.logout_page,name='logout'),
+path('aboutus',views.about_us,name='aboutus'),
 
     path('delete_expense/<int:expense_id>/', views.delete_expense, name='delete_expense'),
     path('delete_income/<int:income_id>/', views.delete_income, name='delete_income'),
@@ -43,5 +44,6 @@ urlpatterns = [
 
 path('expenses/pdf', views.generate_expense_pdf, name='generate_expense_pdf'),
 
+    path("chatbot", views.chatbot_view, name="chatbot"),
 
 ]

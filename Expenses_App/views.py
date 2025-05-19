@@ -17,12 +17,13 @@ from .forms import IncomeForm, ExpenseForm, SavingForm, BudgetForm
 from django.db.models import Sum
 
 
-
-
+from datetime import datetime
+from datetime import date
+import calendar
 
 def welcome(request):
     return render(request, 'welcome.html')
-
+@login_required
 def home_page(request):
     return render(request, 'home.html')
 
@@ -38,7 +39,7 @@ def login_page(request):
             user=authenticate(request,username=username,password=password)
             # print(user)
             if user is None:
-                messages.error(request,'The User Does Not Exist')
+                messages.error(request,'Invalid Credentials')
                 return redirect('login')
             else:
                 login(request,user)
@@ -52,6 +53,7 @@ def register_page(request):
         name=request.POST.get('name')
         username = request.POST.get('username')
         password = request.POST.get('password')
+        lastname=request.POST.get('lname')
         confirm_password=request.POST.get('confirm_password')
         email = request.POST.get('email')
 
@@ -68,6 +70,7 @@ def register_page(request):
             first_name=name,
             username=username,
             email=email,
+            last_name=lastname,
 
         )
         user_data.set_password(password)
@@ -83,7 +86,7 @@ def register_page(request):
 
 def logout_page(request):
     logout(request)
-    return redirect('login')
+    return redirect('welcome')
 
 
 @login_required
@@ -123,14 +126,22 @@ def income(request):
     income = Income.objects.filter(user=user).first()
     income_form = IncomeForm(instance=income)
 
+
+
     if request.method == 'POST':
         income_form = IncomeForm(request.POST, instance=income)
         if income_form.is_valid():
+
             income = income_form.save(commit=False)
             income.user = user
-            income.save()
-            messages.success(request, 'Income updated successfully.')
-            return redirect('income')
+            if income.amount<0:
+                messages.error(request, 'Income amount cannot be negative.')
+                return redirect('income')
+            else:
+                income.save()
+                messages.success(request, 'Income updated successfully.')
+                return redirect('income')
+
         else:
             messages.error(request, 'Invalid income data. Please correct the errors.')
 
@@ -146,19 +157,40 @@ def expense_view(request):
     expense_form = ExpenseForm()
     budgets = Budget.objects.filter(user=user)
 
+    exp = Expense.objects.filter(user=user)
+    total_expenses = exp.aggregate(Sum('amount'))['amount__sum'] or 0
+
     search_date = request.GET.get('search_date')
     search_category = request.GET.get('search_category')
+    search_month = request.GET.get('search_month')
 
     if search_date:
         expenses = expenses.filter(date=search_date)
     if search_category:
         expenses = expenses.filter(category_id=search_category)
 
+    if search_month:
+        try:
+            if search_month:
+                year_str, month_str = search_month.split('-')
+                year = int(year_str)
+                month = int(month_str)
+                _, num_days = calendar.monthrange(year, month)
+                start_date = datetime(year, month, 1).date()
+                end_date = datetime(year, month, num_days).date()
+                expenses = expenses.filter(date__gte=start_date, date__lte=end_date)
+        except ValueError:
+            messages.error(request, 'Invalid month format. Please use YYYY-MM.')
+
     if request.method == 'POST':
         expense_form = ExpenseForm(request.POST)
         if expense_form.is_valid():
             expense = expense_form.save(commit=False)
             expense.user = user
+
+            if expense.amount < 0:
+                messages.error(request, 'Expense amount cannot be negative.')
+                return redirect('expenses')
 
             # Budget check.
             budget = budgets.filter(category=expense.category).first()
@@ -181,7 +213,9 @@ def expense_view(request):
         'expenses': expenses,
         'expense_categories': expense_categories,
         'search_date': search_date,
+        'search_month': search_month,
         'search_category': search_category,
+        'total_expenses': total_expenses
     }
     return render(request, 'expenses.html', context)
 
@@ -191,18 +225,33 @@ def budget_view(request):
     user = request.user
     budgets = Budget.objects.filter(user=user)
     budget_form = BudgetForm()
+    # category=ExpenseCategory.objects.all()
+
+    categories_with_budget = budgets.values_list('category', flat=True)
+    all_categories = ExpenseCategory.objects.all()
 
     if request.method == 'POST':
         budget_form = BudgetForm(request.POST)
         if budget_form.is_valid():
-            budget = budget_form.save(commit=False)
-            budget.user = user
-            budget.save()
-            messages.success(request, 'Budget added successfully.')
-            return redirect('budget')
+            category = budget_form.cleaned_data['category']
+            if category.id in categories_with_budget:
+                messages.info(request, f'A budget limit is already set for the category')
+                return redirect('budget')
+
+            else:
+                budget = budget_form.save(commit=False)
+                budget.user = user
+
+                if budget.limit < 0:
+                    messages.error(request, 'Budget limit cannot be negative.')
+                    return redirect('budget')
+                else:
+                    budget.save()
+                    messages.success(request, 'Budget added successfully.')
+                    return redirect('budget')
+
         else:
             messages.error(request, 'Invalid budget data. Please correct the errors.')
-
     context = {'budget_form': budget_form, 'budgets': budgets}
     return render(request, 'budget.html', context)
 
@@ -211,19 +260,26 @@ def saving_view(request):
     user = request.user
     savings = Saving.objects.filter(user=user).order_by('-date')
     saving_form = SavingForm()
+    # saving_=Saving.objects.filter(user=user).first()
     income = Income.objects.filter(user=user).first()
     expenses = Expense.objects.filter(user=user)
     total_expenses = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
-    remaining_amount = income.amount - total_expenses if income else 0
-    # save=remaining_amount
+    remaining_amount = (income.amount - total_expenses) if income else 0
+    saving_amt=Saving.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or 0
+    saving_amount=remaining_amount-saving_amt
+
     if request.method == 'POST':
         saving_form = SavingForm(request.POST)
         if saving_form.is_valid():
+
             saving = saving_form.save(commit=False)
             saving.user = user
+            if saving.amount < 0:
+                messages.error(request, 'Saving amount cannot be negative.')
+                return redirect('savings')
 
             # Check if saving amount is valid
-            if saving.amount > remaining_amount:
+            elif saving.amount > remaining_amount:
                 messages.error(request, 'Saving amount exceeds remaining amount.')
                 return redirect('savings')
 
@@ -234,25 +290,59 @@ def saving_view(request):
         else:
             messages.error(request, 'Invalid saving data. Please correct the errors.')
 
-    context = {'saving_form': saving_form, 'savings': savings, 'remaining_amount': remaining_amount,}
+    context = {'saving_form': saving_form, 'savings': savings, 'saving_amount': saving_amount,}
     return render(request, 'savings.html', context)
 
 
 @login_required
 def generate_expense_pdf(request):
     user = request.user
-    expenses = Expense.objects.filter(user=user).order_by('-date')
+    search_month_year = request.POST.get('search_month')  # Get the month from the POST request
 
-    template_path = 'expenses/expense_pdf.html'  # Create this template
-    context = {'expenses': expenses}
+    if not search_month_year:
+        return HttpResponse("Please select a month to generate the PDF.")
+
+    try:
+        year_str, month_str = search_month_year.split('-')
+        year = int(year_str)
+        month = int(month_str)
+        _, num_days = calendar.monthrange(year, month)
+        start_date = datetime(year, month, 1).date()
+        end_date = datetime(year, month, num_days).date()
+        expenses = Expense.objects.filter(user=user, date__gte=start_date, date__lte=end_date).order_by('-date')
+    except (ValueError, IndexError):
+        return HttpResponse("Invalid month format. Please use YYYY-MM.")
+
+    inc = Income.objects.filter(user=user).first()  # Consider filtering Income by month/year if needed
+    total_expenses = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    remaining_amount = (inc.amount - total_expenses) if inc else 0
+
+    template_path = 'expenses/expense_pdf.html'
+    context = {
+        'expenses': expenses,
+        'user': user,
+        'total_expenses': total_expenses,
+        'remaining_amount': remaining_amount,
+        'month_name': calendar.month_name[month],
+        'year': year,
+    }
     template = get_template(template_path)
     html = template.render(context)
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="expenses.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="expenses_{calendar.month_name[month]}_{year}.pdf"'
 
     pisa_status = pisa.CreatePDF(html, dest=response)
 
     if pisa_status.err:
         return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+
+
+
+def about_us(request):
+    return render(request, 'AboutUs/aboutus.html')
+
+def chatbot_view(request):
+    return render(request, 'Chatbot/chatbot.html')

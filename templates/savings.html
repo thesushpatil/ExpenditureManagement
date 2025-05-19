@@ -1,10 +1,12 @@
 
 {% extends 'base.html' %}
 {% block content %}
-<div style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
-    <div style="text-align: center; width: 80%; max-width: 600px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9;">
-        <h2>SAVINGS</h2>
-        <p>Remaining Amount: {{ remaining_amount }}</p>
+<div style="display: flex; justify-content: center; min-height: 80vh; align-items: flex-start; padding: 20px;">
+    <div style="text-align: center; width: 45%; max-width: 400px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color:navajowhite; margin-right: 20px;">
+        <h3>SAVINGS</h3>
+    <br>
+        <b>Remaining Amount: {{ saving_amount }}</b>
+    <br><br>
         <form method="post" action="{% url 'savings' %}">
             {% csrf_token %}
             {% if messages %}
@@ -18,23 +20,37 @@
             <button type="submit" name="saving_submit" class="btn btn-primary">Add Saving</button>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
         </form>
+    </div>
 
-        <h3 style="margin-top: 20px;">Savings History</h3>
+    <div style="text-align: center; width: 45%; max-width: 400px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: navajowhite;">
+        <h3 style="margin-top: 0;">Savings History</h3>
+    <br>
+        {% if savings %}
         <ul>
             {% for saving in savings %}
-            <li>
-                {{ saving.date }}: {{ saving.amount }} - {{ saving.description }}
+            <li style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                <span>{{ saving.date }}: {{ saving.amount }} - {{ saving.description }}</span>
                 <a href="{% url 'delete_saving' saving.id %}" class="btn btn-danger btn-sm">Delete</a>
             </li>
             {% empty %}
             <li>No savings added yet.</li>
             {% endfor %}
         </ul>
+        {% else %}
+        <p>No savings added yet.</p>
+        {% endif %}
     </div>
 </div>
-{% endblock %}
+
 
 <style>
+    .navbar {
+            background-color: #2c3e50 !important; /* Dark blue/gray */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
     .btn {
         margin-right: 5px;
     }
@@ -43,21 +59,27 @@
         font-size: 0.8em;
     }
     h3 {
-        margin-top: 15px;
+        margin-top: 0; /* Adjust to align with the form heading */
         margin-bottom: 10px;
     }
     ul {
         list-style: none;
         padding: 0;
     }
-    ul li {
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
     ul li:last-child {
         border-bottom: none;
     }
+    /* Adjust width for smaller screens */
+    @media (max-width: 768px) {
+        .section-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        .section-container > div {
+            width: 90%;
+            margin-right: 0 !important;
+            margin-bottom: 20px;
+        }
+    }
 </style>
+{% endblock %}

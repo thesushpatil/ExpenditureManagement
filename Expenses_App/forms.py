@@ -20,6 +20,10 @@ class SavingForm(forms.ModelForm):
     class Meta:
         model = Saving
         fields = ['amount', 'description']
+        labels = {
+            'amount': 'Daily Saving Amount',  # Change 'Amount' to 'Savings Value'
+            'description': 'Details',  # You can change other labels here if needed
+        }
 
 class BudgetForm(forms.ModelForm):
     class Meta:
