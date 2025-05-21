@@ -13,7 +13,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="home">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout">Logout</a></li>
                 </ul>
             </div>
@@ -101,6 +101,45 @@
     .team-member-card:hover {
         transform: translateY(-5px);
     }
+     .navbar {
+            background-color: #2c3e50 !important; /* Dark blue/gray */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 1.6em;
+            color: #f39c12; /* Gold/Amber */
+        }
+
+        .navbar-brand p {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ecf0f1; /* Light gray text */
+        }
+
+        .navbar-nav .nav-link {
+            color: #ecf0f1 !important;
+            margin-left: 15px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f39c12 !important;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #ecf0f1;
+        }
 </style>
 
 {% endblock %}
