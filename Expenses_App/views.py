@@ -290,7 +290,7 @@ def saving_view(request):
         else:
             messages.error(request, 'Invalid saving data. Please correct the errors.')
 
-    context = {'saving_form': saving_form, 'savings': savings, 'saving_amount': saving_amount,}
+    context = {'saving_form': saving_form, 'savings': savings, 'saving_amount': saving_amount,'saving_amt':saving_amt}
     return render(request, 'savings.html', context)
 
 

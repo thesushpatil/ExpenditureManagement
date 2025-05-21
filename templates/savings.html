@@ -24,7 +24,10 @@
 
     <div style="text-align: center; width: 45%; max-width: 400px; padding: 20px; border: 1px solid #eee; border-radius: 8px; background-color: navajowhite;">
         <h3 style="margin-top: 0;">Savings History</h3>
-    <br>
+    <br> {% if saving_amt %}
+        <b>Total Savings:{{ saving_amt }}</b>
+    {% endif %}
+    <br><br>
         {% if savings %}
         <ul>
             {% for saving in savings %}
