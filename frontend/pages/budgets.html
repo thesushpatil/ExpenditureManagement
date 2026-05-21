@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgets - ExpManage</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-wallet"></i><span>ExpManage</span></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="income.html" class="nav-item"><i class="fas fa-wallet"></i> Income</a>
+                <a href="expenses.html" class="nav-item"><i class="fas fa-receipt"></i> Expenses</a>
+                <a href="savings.html" class="nav-item"><i class="fas fa-piggy-bank"></i> Savings</a>
+                <a href="budgets.html" class="nav-item active"><i class="fas fa-bullseye"></i> Budgets</a>
+                <a href="khatabook.html" class="nav-item"><i class="fas fa-book"></i> Khatabook</a>
+                <a href="chatbot.html" class="nav-item"><i class="fas fa-robot"></i> AI Assistant</a>
+                <a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About Us</a>
+            </nav>
+            <div class="sidebar-footer"><button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+                <h2>Budgets</h2>
+                <div class="user-info"><div class="user-avatar"><i class="fas fa-user"></i></div><span id="user-name">User</span></div>
+            </header>
+
+            <section class="content-section active">
+                <div class="section-header">
+                    <div><h2>Budgets</h2><p>Set spending limits for each category</p></div>
+                    <button class="btn-primary" onclick="toggleForm('budget-form')"><i class="fas fa-plus"></i> Set Budget</button>
+                </div>
+
+                <div id="budget-form" class="form-card hidden">
+                    <h3>New Budget</h3>
+                    <form id="add-budget-form">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Category *</label><select id="bud-category" required><option value="">Select category</option></select></div>
+                            <div class="form-group"><label>Limit *</label><input type="number" id="bud-limit" step="0.01" min="0.01" placeholder="0.00" required></div>
+                            <div class="form-group"><label>Month</label><select id="bud-month"></select></div>
+                            <div class="form-group"><label>Year</label><input type="number" id="bud-year" min="2020" max="2030"></div>
+                        </div>
+                        <button type="submit" class="btn-primary">Create Budget</button>
+                        <button type="button" class="btn-secondary" onclick="toggleForm('budget-form')">Cancel</button>
+                    </form>
+                </div>
+
+                <div id="budgets-grid" class="budgets-grid"></div>
+                <p id="budgets-empty" class="empty-state hidden"><i class="fas fa-bullseye"></i><br>No budgets set. Create budgets to control your spending!</p>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        requireAuth();
+        loadUserName();
+        initBudgetForm();
+        loadBudgets();
+
+        async function initBudgetForm() {
+            const cats = await apiGetCategories();
+            const sel = document.getElementById('bud-category');
+            cats.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; sel.appendChild(o); });
+
+            const now = new Date();
+            const monthSel = document.getElementById('bud-month');
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            months.forEach((m, i) => { const o = document.createElement('option'); o.value = i+1; o.textContent = m; if (i+1 === now.getMonth()+1) o.selected = true; monthSel.appendChild(o); });
+            document.getElementById('bud-year').value = now.getFullYear();
+        }
+
+        document.getElementById('add-budget-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await apiCreateBudget({
+                category: parseInt(document.getElementById('bud-category').value),
+                limit: parseFloat(document.getElementById('bud-limit').value),
+                month: parseInt(document.getElementById('bud-month').value),
+                year: parseInt(document.getElementById('bud-year').value),
+            });
+            if (result.ok) {
+                showToast('Budget created!');
+                document.getElementById('bud-limit').value = '';
+                toggleForm('budget-form');
+                loadBudgets();
+            } else {
+                const msg = result.data?.error?.details?.[0] || result.data?.error?.message || 'Failed to create budget';
+                showToast(typeof msg === 'string' ? msg : 'Failed', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

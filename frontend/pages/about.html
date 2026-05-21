@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - ExpManage</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-wallet"></i><span>ExpManage</span></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="income.html" class="nav-item"><i class="fas fa-wallet"></i> Income</a>
+                <a href="expenses.html" class="nav-item"><i class="fas fa-receipt"></i> Expenses</a>
+                <a href="savings.html" class="nav-item"><i class="fas fa-piggy-bank"></i> Savings</a>
+                <a href="budgets.html" class="nav-item"><i class="fas fa-bullseye"></i> Budgets</a>
+                <a href="khatabook.html" class="nav-item"><i class="fas fa-book"></i> Khatabook</a>
+                <a href="chatbot.html" class="nav-item"><i class="fas fa-robot"></i> AI Assistant</a>
+                <a href="about.html" class="nav-item active"><i class="fas fa-info-circle"></i> About Us</a>
+            </nav>
+            <div class="sidebar-footer"><button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+                <h2>About Us</h2>
+                <div class="user-info"><div class="user-avatar"><i class="fas fa-user"></i></div><span id="user-name">User</span></div>
+            </header>
+
+            <section class="content-section active">
+                <div class="about-hero">
+                    <div class="about-icon"><i class="fas fa-wallet"></i></div>
+                    <h1>ExpManage</h1>
+                    <p class="about-tagline">Track Smarter. Budget Better. Live Freer.</p>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)"><i class="fas fa-eye"></i></div>
+                        <h3>Our Vision</h3>
+                        <p>To empower individuals with intuitive and insightful tools to achieve financial clarity, security, and freedom through effective expenditure management.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background:linear-gradient(135deg,#10b981,#059669)"><i class="fas fa-bullseye"></i></div>
+                        <h3>Our Mission</h3>
+                        <p>Making personal finance management accessible, beautiful, and effortless for everyone regardless of their financial background.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-card-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)"><i class="fas fa-lightbulb"></i></div>
+                        <h3>Our Approach</h3>
+                        <p>We combine clean design with powerful analytics to give you real-time insights into your spending habits and financial health.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:32px">
+                    <h3 style="text-align:center; margin-bottom:24px;">Our Team</h3>
+                    <div class="team-grid">
+                        <div class="team-card">
+                            <img src="../images/sushant.jpg" alt="Sushant Patil" class="team-photo">
+                            <h4>Sushant Patil</h4>
+                            <p>Lead Developer</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar"><i class="fas fa-user"></i></div>
+                            <h4>Vilas Rathod</h4>
+                            <p>Front-End Developer</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar"><i class="fas fa-user"></i></div>
+                            <h4>Devraj Powar</h4>
+                            <p>Back-End Developer</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar"><i class="fas fa-user"></i></div>
+                            <h4>Sanghpal Pawar</h4>
+                            <p>Front-End Developer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top:20px">
+                    <h3>Tech Stack</h3>
+                    <div class="tech-badges">
+                        <span class="tech-badge">Django 5.1</span>
+                        <span class="tech-badge">Django REST Framework</span>
+                        <span class="tech-badge">JWT Authentication</span>
+                        <span class="tech-badge">HTML5 / CSS3 / JavaScript</span>
+                        <span class="tech-badge">SQLite</span>
+                        <span class="tech-badge">Gemini AI (Chatbot)</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+    <script>requireAuth(); loadUserName();</script>
+</body>
+</html>

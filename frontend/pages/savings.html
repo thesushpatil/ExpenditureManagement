@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings - ExpManage</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-wallet"></i><span>ExpManage</span></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="income.html" class="nav-item"><i class="fas fa-wallet"></i> Income</a>
+                <a href="expenses.html" class="nav-item"><i class="fas fa-receipt"></i> Expenses</a>
+                <a href="savings.html" class="nav-item active"><i class="fas fa-piggy-bank"></i> Savings</a>
+                <a href="budgets.html" class="nav-item"><i class="fas fa-bullseye"></i> Budgets</a>
+                <a href="khatabook.html" class="nav-item"><i class="fas fa-book"></i> Khatabook</a>
+                <a href="chatbot.html" class="nav-item"><i class="fas fa-robot"></i> AI Assistant</a>
+                <a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About Us</a>
+            </nav>
+            <div class="sidebar-footer"><button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+                <h2>Savings</h2>
+                <div class="user-info"><div class="user-avatar"><i class="fas fa-user"></i></div><span id="user-name">User</span></div>
+            </header>
+
+            <section class="content-section active">
+                <div class="section-header">
+                    <div><h2>Savings</h2><p>Build your financial safety net</p></div>
+                    <button class="btn-primary" onclick="toggleForm('savings-form')"><i class="fas fa-plus"></i> Add Saving</button>
+                </div>
+
+                <div class="stats-grid stats-small">
+                    <div class="stat-card stat-savings"><div class="stat-info"><p>Total Savings</p><h3 id="savings-total">₹0.00</h3></div></div>
+                    <div class="stat-card stat-balance"><div class="stat-info"><p>This Month</p><h3 id="savings-monthly">₹0.00</h3></div></div>
+                </div>
+
+                <div id="savings-form" class="form-card hidden">
+                    <h3>New Saving</h3>
+                    <form id="add-saving-form">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Amount *</label><input type="number" id="sav-amount" step="0.01" min="0.01" placeholder="0.00" required></div>
+                            <div class="form-group"><label>Goal</label>
+                                <select id="sav-goal"><option value="General">General</option><option value="Emergency Fund">Emergency Fund</option><option value="Vacation">Vacation</option><option value="Education">Education</option><option value="Retirement">Retirement</option><option value="Investment">Investment</option><option value="Other">Other</option></select>
+                            </div>
+                            <div class="form-group"><label>Date *</label><input type="date" id="sav-date" required></div>
+                            <div class="form-group"><label>Description</label><input type="text" id="sav-description" placeholder="Optional note"></div>
+                        </div>
+                        <button type="submit" class="btn-primary">Add Saving</button>
+                        <button type="button" class="btn-secondary" onclick="toggleForm('savings-form')">Cancel</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Goal</th><th>Description</th><th>Date</th><th>Amount</th><th>Actions</th></tr></thead>
+                            <tbody id="savings-table"></tbody>
+                        </table>
+                    </div>
+                    <p id="savings-empty" class="empty-state hidden"><i class="fas fa-piggy-bank"></i><br>No savings yet. Start saving today!</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        requireAuth();
+        loadUserName();
+        document.getElementById('sav-date').value = getTodayDate();
+        loadSavings();
+
+        document.getElementById('add-saving-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await apiCreateSaving({
+                amount: parseFloat(document.getElementById('sav-amount').value),
+                goal: document.getElementById('sav-goal').value,
+                date: document.getElementById('sav-date').value,
+                description: document.getElementById('sav-description').value,
+            });
+            if (result.ok) {
+                showToast('Saving added!');
+                document.getElementById('sav-amount').value = '';
+                document.getElementById('sav-description').value = '';
+                toggleForm('savings-form');
+                loadSavings();
+            } else { showToast(result.data?.error?.message || 'Failed to add saving', 'error'); }
+        });
+    </script>
+</body>
+</html>

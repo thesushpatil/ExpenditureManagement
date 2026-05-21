@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+
+# Django
+backend/db.sqlite3
+backend/staticfiles/
+*.log
+
+# Environment
+backend/.env
+frontend/.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Images placeholder
+frontend/images/sushant.jpg

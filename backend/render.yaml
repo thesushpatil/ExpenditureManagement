@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: expmanage-api
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOW_ALL
+        value: "True"
+      - key: PYTHON_VERSION
+        value: "3.11.0"

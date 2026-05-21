@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khatabook - ExpManage</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .khata-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .khata-header h2 { font-size:22px; font-weight:700; }
+        .khata-header p { color:var(--gray-500); font-size:14px; }
+
+        .contacts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:24px; }
+        .contact-card {
+            background:white; border-radius:var(--radius); padding:20px;
+            border:1px solid var(--gray-100); box-shadow:var(--shadow);
+            transition:all 0.3s; cursor:pointer; position:relative;
+        }
+        .contact-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-2px); }
+        .contact-card.selected { border-color:var(--primary); box-shadow:0 0 0 2px rgba(99,102,241,0.2); }
+        .contact-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+        .contact-avatar {
+            width:44px; height:44px; border-radius:50%;
+            background:linear-gradient(135deg,var(--primary),#7c3aed);
+            display:flex; align-items:center; justify-content:center;
+            color:white; font-weight:700; font-size:16px;
+        }
+        .contact-info h4 { font-size:15px; font-weight:600; }
+        .contact-info p { font-size:13px; color:var(--gray-500); }
+        .contact-balance { text-align:right; }
+        .balance-positive { color:var(--green); font-weight:700; font-size:16px; }
+        .balance-negative { color:var(--red); font-weight:700; font-size:16px; }
+        .balance-zero { color:var(--gray-400); font-weight:600; font-size:16px; }
+        .balance-label { font-size:11px; color:var(--gray-500); }
+
+        .contact-actions { display:flex; gap:6px; margin-top:12px; }
+        .contact-actions button {
+            flex:1; padding:8px; border:none; border-radius:8px;
+            font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s;
+            display:flex; align-items:center; justify-content:center; gap:4px;
+        }
+        .btn-gave { background:#fee2e2; color:#dc2626; }
+        .btn-gave:hover { background:#fecaca; }
+        .btn-got { background:#d1fae5; color:#059669; }
+        .btn-got:hover { background:#a7f3d0; }
+        .btn-remind { background:#e0e7ff; color:#4f46e5; }
+        .btn-remind:hover { background:#c7d2fe; }
+        .btn-delete-contact { position:absolute; top:12px; right:12px; background:none; border:none; color:var(--gray-300); cursor:pointer; padding:4px; }
+        .btn-delete-contact:hover { color:var(--red); }
+
+        /* Ledger detail */
+        .ledger-panel { background:white; border-radius:var(--radius); padding:24px; border:1px solid var(--gray-100); box-shadow:var(--shadow); }
+        .ledger-panel h3 { margin-bottom:16px; font-size:16px; }
+        .ledger-entry {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:12px 0; border-bottom:1px solid var(--gray-100);
+        }
+        .ledger-entry:last-child { border-bottom:none; }
+        .entry-type-gave { color:var(--red); }
+        .entry-type-got { color:var(--green); }
+        .entry-badge {
+            padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600;
+        }
+        .badge-gave { background:#fee2e2; color:#dc2626; }
+        .badge-got { background:#d1fae5; color:#059669; }
+
+        /* Modal */
+        .modal-overlay {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5);
+            z-index:1000; align-items:center; justify-content:center; padding:20px;
+        }
+        .modal-overlay.active { display:flex; }
+        .modal-box {
+            background:white; border-radius:16px; padding:28px; width:100%; max-width:420px;
+            box-shadow:0 20px 60px rgba(0,0,0,0.3); animation:fadeIn 0.3s ease;
+        }
+        .modal-box h3 { margin-bottom:16px; font-size:18px; }
+        .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--gray-400); }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-wallet"></i><span>ExpManage</span></div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="income.html" class="nav-item"><i class="fas fa-wallet"></i> Income</a>
+                <a href="expenses.html" class="nav-item"><i class="fas fa-receipt"></i> Expenses</a>
+                <a href="savings.html" class="nav-item"><i class="fas fa-piggy-bank"></i> Savings</a>
+                <a href="budgets.html" class="nav-item"><i class="fas fa-bullseye"></i> Budgets</a>
+                <a href="khatabook.html" class="nav-item active"><i class="fas fa-book"></i> Khatabook</a>
+                <a href="chatbot.html" class="nav-item"><i class="fas fa-robot"></i> AI Assistant</a>
+                <a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About Us</a>
+            </nav>
+            <div class="sidebar-footer"><button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+                <h2><i class="fas fa-book" style="color:var(--primary);margin-right:8px;"></i> Khatabook</h2>
+                <div class="user-info"><div class="user-avatar"><i class="fas fa-user"></i></div><span id="user-name">User</span></div>
+            </header>
+
+            <section class="content-section active">
+                <div class="khata-header">
+                    <div>
+                        <h2>Khatabook - Lend & Borrow</h2>
+                        <p>Track money you gave or received from people. Send WhatsApp reminders.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openAddContactModal()"><i class="fas fa-user-plus"></i> Add Contact</button>
+                </div>
+
+                <!-- Contacts Grid -->
+                <div class="contacts-grid" id="contacts-grid"></div>
+                <p id="contacts-empty" class="empty-state hidden">
+                    <i class="fas fa-address-book"></i><br>
+                    No contacts yet. Add someone to start tracking money lent or borrowed.
+                </p>
+
+                <!-- Ledger Detail Panel -->
+                <div class="ledger-panel" id="ledger-panel" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <h3 id="ledger-title">Transaction History</h3>
+                        <button class="btn-secondary" style="padding:6px 12px;margin:0;font-size:12px;" onclick="closeLedger()">Close</button>
+                    </div>
+                    <div id="ledger-entries"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Contact Modal -->
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal-box">
+            <h3><i class="fas fa-user-plus" style="color:var(--primary);margin-right:8px;"></i> Add New Contact</h3>
+            <form id="add-contact-form">
+                <div class="form-group"><label>Name *</label><input type="text" id="contact-name" placeholder="e.g. Rahul Sharma" required></div>
+                <div class="form-group"><label>Phone Number *</label><input type="tel" id="contact-phone" placeholder="e.g. 919876543210" required></div>
+                <div class="form-group"><label>Notes</label><input type="text" id="contact-notes" placeholder="Optional note"></div>
+                <div style="display:flex;gap:8px;margin-top:16px;">
+                    <button type="submit" class="btn-primary">Add Contact</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('contact-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Entry Modal -->
+    <div class="modal-overlay" id="entry-modal">
+        <div class="modal-box">
+            <h3 id="entry-modal-title">Add Transaction</h3>
+            <form id="add-entry-form">
+                <input type="hidden" id="entry-contact-id">
+                <input type="hidden" id="entry-type">
+                <div class="form-group"><label>Amount *</label><input type="number" id="entry-amount" step="0.01" min="0.01" placeholder="0.00" required></div>
+                <div class="form-group"><label>Date *</label><input type="date" id="entry-date" required></div>
+                <div class="form-group"><label>Description</label><input type="text" id="entry-description" placeholder="What was this for?"></div>
+                <div style="display:flex;gap:8px;margin-top:16px;">
+                    <button type="submit" class="btn-primary">Save Entry</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('entry-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../js/api.js"></script>
+    <script src="../js/app.js"></script>
+    <script>
+        requireAuth();
+        loadUserName();
+        loadContacts();
+
+        let allContacts = [];
+
+        async function loadContacts() {
+            allContacts = await apiGetContacts();
+            const grid = document.getElementById('contacts-grid');
+            const empty = document.getElementById('contacts-empty');
+
+            if (allContacts.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            grid.innerHTML = allContacts.map(c => {
+                const initials = c.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+                const balance = c.balance || 0;
+                let balanceClass = 'balance-zero';
+                let balanceText = 'Settled ✓';
+                let balanceLabel = '';
+                if (balance > 0) { balanceClass = 'balance-positive'; balanceText = `₹${balance.toLocaleString()}`; balanceLabel = 'will give you'; }
+                else if (balance < 0) { balanceClass = 'balance-negative'; balanceText = `₹${Math.abs(balance).toLocaleString()}`; balanceLabel = 'you will give'; }
+
+                return `<div class="contact-card" onclick="showLedger(${c.id}, '${c.name.replace(/'/g, "\\'")}')">
+                    <button class="btn-delete-contact" onclick="event.stopPropagation();deleteContact(${c.id})" title="Delete"><i class="fas fa-times"></i></button>
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div class="contact-top">
+                            <div class="contact-avatar">${initials}</div>
+                            <div class="contact-info"><h4>${c.name}</h4><p><i class="fas fa-phone" style="font-size:10px;"></i> ${c.phone}</p></div>
+                        </div>
+                        <div class="contact-balance">
+                            <div class="${balanceClass}">${balanceText}</div>
+                            <div class="balance-label">${balanceLabel}</div>
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="btn-gave" onclick="event.stopPropagation();openEntryModal(${c.id},'gave','${c.name.replace(/'/g, "\\'")}')"><i class="fas fa-arrow-up"></i> You Gave</button>
+                        <button class="btn-got" onclick="event.stopPropagation();openEntryModal(${c.id},'got','${c.name.replace(/'/g, "\\'")}')"><i class="fas fa-arrow-down"></i> You Got</button>
+                        ${balance > 0 ? `<button class="btn-remind" onclick="event.stopPropagation();sendReminder(${c.id})" title="Send SMS reminder"><i class="fas fa-sms"></i> SMS</button><button class="btn-remind" style="background:#dcfce7;color:#16a34a;" onclick="event.stopPropagation();sendWhatsApp(${c.id})" title="Send WhatsApp reminder"><i class="fab fa-whatsapp"></i> WhatsApp</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // === MODALS ===
+        function openAddContactModal() { document.getElementById('contact-modal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function openEntryModal(contactId, type, name) {
+            document.getElementById('entry-contact-id').value = contactId;
+            document.getElementById('entry-type').value = type;
+            document.getElementById('entry-date').value = getTodayDate();
+            document.getElementById('entry-modal-title').innerHTML = type === 'gave'
+                ? `<i class="fas fa-arrow-up" style="color:var(--red);margin-right:8px;"></i> You Gave to ${name}`
+                : `<i class="fas fa-arrow-down" style="color:var(--green);margin-right:8px;"></i> You Got from ${name}`;
+            document.getElementById('entry-modal').classList.add('active');
+        }
+
+        // === FORMS ===
+        document.getElementById('add-contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await apiCreateContact({
+                name: document.getElementById('contact-name').value,
+                phone: document.getElementById('contact-phone').value,
+                notes: document.getElementById('contact-notes').value,
+            });
+            if (result.ok) {
+                showToast('Contact added!');
+                document.getElementById('contact-name').value = '';
+                document.getElementById('contact-phone').value = '';
+                document.getElementById('contact-notes').value = '';
+                closeModal('contact-modal');
+                loadContacts();
+            } else {
+                const msg = result.data?.error?.details?.phone?.[0] || result.data?.error?.message || 'Failed to add contact';
+                showToast(msg, 'error');
+            }
+        });
+
+        document.getElementById('add-entry-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = await apiCreateLedgerEntry({
+                contact: parseInt(document.getElementById('entry-contact-id').value),
+                amount: parseFloat(document.getElementById('entry-amount').value),
+                transaction_type: document.getElementById('entry-type').value,
+                date: document.getElementById('entry-date').value,
+                description: document.getElementById('entry-description').value,
+            });
+            if (result.ok) {
+                showToast('Entry added!');
+                document.getElementById('entry-amount').value = '';
+                document.getElementById('entry-description').value = '';
+                closeModal('entry-modal');
+                loadContacts();
+            } else {
+                showToast(result.data?.error?.message || 'Failed to add entry', 'error');
+            }
+        });
+
+        // === LEDGER DETAIL ===
+        async function showLedger(contactId, name) {
+            const entries = await apiGetLedgerEntries(contactId);
+            const panel = document.getElementById('ledger-panel');
+            document.getElementById('ledger-title').textContent = `Transactions with ${name}`;
+            panel.style.display = 'block';
+
+            const container = document.getElementById('ledger-entries');
+            if (entries.length === 0) {
+                container.innerHTML = '<p class="empty-state" style="padding:20px;"><i class="fas fa-exchange-alt"></i><br>No transactions yet</p>';
+                return;
+            }
+            container.innerHTML = entries.map(e => `
+                <div class="ledger-entry">
+                    <div>
+                        <span class="entry-badge ${e.transaction_type === 'gave' ? 'badge-gave' : 'badge-got'}">
+                            ${e.transaction_type === 'gave' ? '↑ You Gave' : '↓ You Got'}
+                        </span>
+                        <span style="font-size:13px;color:var(--gray-500);margin-left:8px;">${e.description || ''}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="${e.transaction_type === 'gave' ? 'entry-type-gave' : 'entry-type-got'}" style="font-weight:600;">
+                            ${e.transaction_type === 'gave' ? '-' : '+'}₹${Number(e.amount).toLocaleString()}
+                        </div>
+                        <div style="font-size:11px;color:var(--gray-400);">${e.date}</div>
+                    </div>
+                </div>
+            `).join('');
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeLedger() { document.getElementById('ledger-panel').style.display = 'none'; }
+
+        // === ACTIONS ===
+        async function deleteContact(id) {
+            if (!confirm('Delete this contact and all their transactions?')) return;
+            if (await apiDeleteContact(id)) { showToast('Contact deleted'); loadContacts(); closeLedger(); }
+            else showToast('Failed to delete', 'error');
+        }
+
+        async function sendReminder(contactId) {
+            const result = await apiSendReminder(contactId);
+            if (result.ok) {
+                const data = result.data.data;
+                showToast(`SMS reminder ready for ${data.contact_name}!`);
+                // Open SMS link (default messaging app)
+                window.open(data.sms_link, '_self');
+            } else {
+                showToast(result.data?.error?.message || 'Failed to send reminder', 'error');
+            }
+        }
+
+        async function sendWhatsApp(contactId) {
+            const result = await apiSendReminder(contactId);
+            if (result.ok) {
+                const data = result.data.data;
+                showToast(`WhatsApp reminder ready for ${data.contact_name}!`);
+                window.open(data.whatsapp_link, '_blank');
+            } else {
+                showToast(result.data?.error?.message || 'Failed to send reminder', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
