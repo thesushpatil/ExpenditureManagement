@@ -3,10 +3,10 @@
  * Simple fetch-based HTTP client with JWT token management.
  */
 
-// Change this to your Render backend URL after deployment
-// For local development: 'http://127.0.0.1:8000/api/v1'
-// For production: 'https://YOUR-APP-NAME.onrender.com/api/v1'
-const API_BASE = 'http://127.0.0.1:8000/api/v1';
+// Auto-detect: use localhost for development, Render URL for production
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:8000/api/v1'
+    : 'https://expmanage-api.onrender.com/api/v1';
 
 // ===== TOKEN MANAGEMENT =====
 
