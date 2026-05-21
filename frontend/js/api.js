@@ -6,7 +6,7 @@
 // Auto-detect: use localhost for development, Render URL for production
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:8000/api/v1'
-    : 'https://expmanage-api.onrender.com/api/v1';
+    : 'https://expmanage-sush.onrender.com/api/v1';
 
 // ===== TOKEN MANAGEMENT =====
 

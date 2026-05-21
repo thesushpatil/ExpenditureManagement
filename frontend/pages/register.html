@@ -101,9 +101,28 @@
             if (result.ok) {
                 window.location.href = 'dashboard.html';
             } else {
-                const details = result.data.error?.details || result.data;
-                const firstError = Object.values(details).flat()[0];
-                showToast(typeof firstError === 'string' ? firstError : 'Registration failed', 'error');
+                const data = result.data;
+                let msg = 'Registration failed';
+                // Extract the actual error message from DRF response
+                if (data?.error?.details) {
+                    const details = data.error.details;
+                    const allErrors = [];
+                    Object.entries(details).forEach(([field, errors]) => {
+                        if (Array.isArray(errors)) {
+                            errors.forEach(e => allErrors.push(`${field}: ${e}`));
+                        } else if (typeof errors === 'string') {
+                            allErrors.push(errors);
+                        }
+                    });
+                    msg = allErrors[0] || msg;
+                } else if (data?.password) {
+                    msg = data.password[0];
+                } else if (data?.username) {
+                    msg = data.username[0];
+                } else if (data?.email) {
+                    msg = data.email[0];
+                }
+                showToast(msg, 'error');
                 btn.textContent = 'Create Account'; btn.disabled = false;
             }
         });
